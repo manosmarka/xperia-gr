@@ -11,6 +11,11 @@ export default defineType({
       type: 'string',
     }),
     defineField({
+      name: 'headlineEl',
+      title: 'Headline (Greek)',
+      type: 'string',
+    }),
+    defineField({
       name: 'sourceName',
       title: 'Source Name',
       type: 'string',
@@ -23,6 +28,12 @@ export default defineType({
     defineField({
       name: 'summary',
       title: 'Summary',
+      type: 'text',
+      rows: 3
+    }),
+    defineField({
+      name: 'summaryEl',
+      title: 'Summary (Greek)',
       type: 'text',
       rows: 3
     }),

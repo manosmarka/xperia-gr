@@ -1,9 +1,50 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { sanityClient } from '../../lib/sanity';
+
+const query = `*[_type == "article"] | order(_createdAt desc){
+  title,
+  titleEl,
+  "slug": slug.current,
+  "imageUrl": mainImage.asset->url,
+  body,
+  bodyEl
+}`;
+
+const articles = await sanityClient.fetch(query);
 ---
+
 <Layout title="Μάθε για την Τεχνητή Νοημοσύνη - Xperia.gr">
   <div class="container mx-auto px-4">
     <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">Μάθε για την Τεχνητή Νοημοσύνη</h1>
-    <p class="text-cyber-grey">Σε αυτή τη σελίδα θα βρεις άρθρα, οδηγούς και παραδείγματα χρήσης της ΤΝ στα ελληνικά.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {articles.length === 0 && <p class="text-cyber-grey">Δεν υπάρχουν ακόμη άρθρα.</p>}
+
+      {articles.map((post: any) => {
+        const title = post.titleEl || post.title;
+
+        return (
+          <article class="bg-gray-900 rounded-xl overflow-hidden border border-gray-800 hover:border-electric-cyan transition-colors">
+            {post.imageUrl && (
+              <img 
+                src={post.imageUrl} 
+                alt={title} 
+                class="w-full h-48 object-cover"
+              />
+            )}
+            <div class="p-6">
+              <h2 class="text-xl font-bold mb-4 text-white">{title}</h2>
+              <a 
+                href={`/el/learn/${post.slug}`} 
+                class="text-electric-cyan hover:underline font-semibold"
+              >
+                Δες το άρθρο →
+              </a>
+            </div>
+          </article>
+        );
+      })}
+    </div>
   </div>
 </Layout>

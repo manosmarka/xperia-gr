@@ -1,7 +1,89 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { sanityClient } from '../../lib/sanity';
+
+const query = `*[_type == "workshop"] | order(startDateTime asc){
+  eventName,
+  eventNameEl,
+  summary,
+  summaryEl,
+  startDateTime,
+  location,
+  price,
+  difficulty,
+  bookingUrl
+}`;
+
+const workshops = await sanityClient.fetch(query);
 ---
+
 <Layout title="Εργαστήρια - Xperia.gr">
-  <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">Εργαστήρια Τεχνητής Νοημοσύνης</h1>
-  <p class="text-cyber-grey">Σύντομα θα δεις εδώ δια ζώσης και online εργαστήρια για μαθητές, γονείς και επαγγελματίες, στα ελληνικά.</p>
+  <div class="container mx-auto px-4">
+    <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">Εργαστήρια Τεχνητής Νοημοσύνης</h1>
+
+    {workshops.length === 0 && (
+      <p class="text-cyber-grey">Δεν υπάρχουν ακόμη δημοσιευμένα εργαστήρια. Πρόσθεσε μερικά στο Sanity για να εμφανιστούν εδώ.</p>
+    )}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {workshops.map((w: any) => {
+        const title = w.eventNameEl || w.eventName;
+        const description = w.summaryEl || w.summary;
+
+        return (
+          <article class="bg-midnight-glass/70 border border-white/10 rounded-2xl p-6 flex flex-col gap-3">
+            <header class="flex items-baseline justify-between gap-4">
+              <h2 class="text-xl font-semibold text-starlight">{title}</h2>
+              {w.difficulty && (
+                <span class="text-xs px-2 py-1 rounded-full bg-electric-cyan/10 text-electric-cyan uppercase tracking-wide">
+                  {w.difficulty}
+                </span>
+              )}
+            </header>
+
+            {description && (
+              <p class="text-sm text-cyber-grey">{description}</p>
+            )}
+
+            <div class="text-xs text-cyber-grey flex flex-wrap gap-4 mt-2">
+              {w.startDateTime && (
+                <span>
+                  <span class="font-semibold text-starlight">Πότε:</span>
+                  {' '}
+                  {new Date(w.startDateTime).toLocaleString('el-GR')}
+                </span>
+              )}
+              {w.location && (
+                <span>
+                  <span class="font-semibold text-starlight">Πού:</span>
+                  {' '}
+                  {w.location}
+                </span>
+              )}
+              {typeof w.price === 'number' && (
+                <span>
+                  <span class="font-semibold text-starlight">Κόστος:</span>
+                  {' '}
+                  €{w.price.toFixed(2)}
+                </span>
+              )}
+            </div>
+
+            {w.bookingUrl && (
+              <div class="mt-4">
+                <a
+                  href={w.bookingUrl}
+                  class="inline-block bg-electric-cyan text-deep-void font-semibold text-sm py-2 px-4 rounded-xl hover:glow-box transition-all"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Κράτηση θέσης
+                </a>
+              </div>
+            )}
+          </article>
+        );
+      })}
+    </div>
+  </div>
 </Layout>

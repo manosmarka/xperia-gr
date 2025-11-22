@@ -1,7 +1,82 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { sanityClient } from '../lib/sanity';
+
+const query = `*[_type == "workshop"] | order(startDateTime asc){
+  eventName,
+  summary,
+  startDateTime,
+  location,
+  price,
+  difficulty,
+  bookingUrl
+}`;
+
+const workshops = await sanityClient.fetch(query);
 ---
+
 <Layout title="Workshops - Xperia.gr">
-  <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">Workshops</h1>
-  <p>Coming soon...</p>
+  <div class="container mx-auto px-4">
+    <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">Workshops &amp; Seminars</h1>
+
+    {workshops.length === 0 && (
+      <p class="text-cyber-grey">No workshops have been published yet. Add some in Sanity to see them here.</p>
+    )}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {workshops.map((w: any) => (
+        <article class="bg-midnight-glass/70 border border-white/10 rounded-2xl p-6 flex flex-col gap-3">
+          <header class="flex items-baseline justify-between gap-4">
+            <h2 class="text-xl font-semibold text-starlight">{w.eventName}</h2>
+            {w.difficulty && (
+              <span class="text-xs px-2 py-1 rounded-full bg-electric-cyan/10 text-electric-cyan uppercase tracking-wide">
+                {w.difficulty}
+              </span>
+            )}
+          </header>
+
+          {w.summary && (
+            <p class="text-sm text-cyber-grey">{w.summary}</p>
+          )}
+
+          <div class="text-xs text-cyber-grey flex flex-wrap gap-4 mt-2">
+            {w.startDateTime && (
+              <span>
+                <span class="font-semibold text-starlight">When:</span>
+                {' '}
+                {new Date(w.startDateTime).toLocaleString()}
+              </span>
+            )}
+            {w.location && (
+              <span>
+                <span class="font-semibold text-starlight">Where:</span>
+                {' '}
+                {w.location}
+              </span>
+            )}
+            {typeof w.price === 'number' && (
+              <span>
+                <span class="font-semibold text-starlight">Price:</span>
+                {' '}
+                €{w.price.toFixed(2)}
+              </span>
+            )}
+          </div>
+
+          {w.bookingUrl && (
+            <div class="mt-4">
+              <a
+                href={w.bookingUrl}
+                class="inline-block bg-electric-cyan text-deep-void font-semibold text-sm py-2 px-4 rounded-xl hover:glow-box transition-all"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Book your spot
+              </a>
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
 </Layout>

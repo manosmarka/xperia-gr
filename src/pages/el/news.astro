@@ -1,7 +1,66 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { sanityClient } from '../../lib/sanity';
+
+const query = `*[_type == "news"] | order(date desc){
+  headline,
+  headlineEl,
+  summary,
+  summaryEl,
+  sourceName,
+  sourceUrl,
+  date,
+  tags
+}`;
+
+const items = await sanityClient.fetch(query);
 ---
+
 <Layout title="Νέα - Xperia.gr">
-  <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">Νέα Τεχνητής Νοημοσύνης</h1>
-  <p class="text-cyber-grey">Εδώ θα εμφανίζονται σύντομα σύντομα νέα και ενημερώσεις γύρω από την Τεχνητή Νοημοσύνη, προσαρμοσμένα για το ελληνικό κοινό.</p>
+  <div class="container mx-auto px-4">
+    <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">Νέα Τεχνητής Νοημοσύνης</h1>
+
+    {items.length === 0 && (
+      <p class="text-cyber-grey">Δεν υπάρχουν ακόμη νέα. Πρόσθεσε "AI News Snippet" στο Sanity για να εμφανιστούν εδώ.</p>
+    )}
+
+    <div class="space-y-4">
+      {items.map((item: any) => {
+        const title = item.headlineEl || item.headline;
+        const summary = item.summaryEl || item.summary;
+
+        return (
+          <article class="bg-midnight-glass/70 border border-white/10 rounded-2xl p-4 flex flex-col gap-2">
+            <header class="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 class="text-lg font-semibold text-starlight">{title}</h2>
+              {item.date && (
+                <time class="text-xs text-cyber-grey">{new Date(item.date).toLocaleDateString('el-GR')}</time>
+              )}
+            </header>
+
+            {summary && (
+              <p class="text-sm text-cyber-grey">{summary}</p>
+            )}
+
+            <div class="flex flex-wrap items-center gap-3 text-xs text-cyber-grey mt-1">
+              {item.sourceName && (
+                <span>
+                  Πηγή: {item.sourceUrl ? (
+                    <a href={item.sourceUrl} class="text-electric-cyan hover:underline" target="_blank" rel="noreferrer">{item.sourceName}</a>
+                  ) : (
+                    item.sourceName
+                  )}
+                </span>
+              )}
+              {item.tags && item.tags.length > 0 && (
+                <span>
+                  · {item.tags.join(', ')}
+                </span>
+              )}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </div>
 </Layout>

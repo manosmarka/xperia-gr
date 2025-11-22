@@ -11,6 +11,11 @@ export default defineType({
       type: 'string',
     }),
     defineField({
+      name: 'titleEl',
+      title: 'Title (Greek)',
+      type: 'string',
+    }),
+    defineField({
       name: 'ageGroup',
       title: 'Age Group',
       type: 'string',
@@ -34,8 +39,19 @@ export default defineType({
       of: [{type: 'block'}]
     }),
     defineField({
+      name: 'instructionsEl',
+      title: 'Instructions (Greek)',
+      type: 'array',
+      of: [{type: 'block'}]
+    }),
+    defineField({
       name: 'safetyNote',
       title: 'Safety Note',
+      type: 'string',
+    }),
+    defineField({
+      name: 'safetyNoteEl',
+      title: 'Safety Note (Greek)',
       type: 'string',
     }),
   ],

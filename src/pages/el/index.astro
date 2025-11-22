@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Card from '../../components/Card.astro';
+import { sanityClient } from '../../lib/sanity';
 
 // Πρόσφατα άρθρα (ενδεικτικά στα ελληνικά)
 const latestArticles = [
@@ -33,6 +34,17 @@ const newsTicker = [
   'Συζητήσεις για ρύθμιση της ΤΝ στο Ευρωπαϊκό Κοινοβούλιο',
   'Νέα εργαλεία ΤΝ για την εκπαίδευση',
 ];
+
+// Workshops for Greek homepage – prefer Greek fields, fallback to English
+const workshopsQuery = `*[_type == "workshop"] | order(startDateTime asc)[0..2]{
+  eventName,
+  eventNameEl,
+  summary,
+  summaryEl,
+  difficulty
+}`;
+
+const workshops = await sanityClient.fetch(workshopsQuery);
 ---
 
 <Layout title="Xperia.gr - Πλατφόρμα Εκπαίδευσης στην Τεχνητή Νοημοσύνη">
@@ -120,5 +132,47 @@ const newsTicker = [
     </div>
   </div>
 
-  <!-- Other sections can be translated similarly later -->
+  <!-- Εργαστήρια & Σεμινάρια (με δεδομένα από Sanity) -->
+  <section class="mb-20 rounded-3xl bg-gradient-to-r from-midnight-glass to-deep-void border border-white/10 p-8 md:p-12">
+    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+      <div class="max-w-md">
+        <h2 class="text-3xl font-orbitron font-bold mb-4">Εργαστήρια &amp; Σεμινάρια</h2>
+        <p class="text-cyber-grey mb-6">
+          Πάρε μέρος σε πρακτικά εργαστήρια και σεμινάρια για να χτίσεις πραγματικές δεξιότητες στην ΤΝ.
+        </p>
+        <a href="/el/workshops" class="inline-block bg-neural-blue text-white font-bold py-3 px-8 rounded-2xl hover:bg-neural-blue/80 transition-colors">
+          Δες όλα τα εργαστήρια
+        </a>
+      </div>
+
+      <div class="flex-1 grid gap-4">
+        {workshops.length === 0 && (
+          <p class="text-cyber-grey text-sm">Δεν υπάρχουν ακόμη δημοσιευμένα εργαστήρια. Πρόσθεσε μερικά στο Sanity για να εμφανιστούν εδώ.</p>
+        )}
+
+        {workshops.map((w: any) => {
+          const title = w.eventNameEl || w.eventName;
+          const description = w.summaryEl || w.summary;
+
+          return (
+            <div class="bg-deep-void/60 border border-white/10 rounded-2xl p-4 hover:border-electric-cyan/60 transition-colors">
+              <div class="flex items-baseline justify-between gap-4">
+                <h3 class="font-semibold text-starlight">{title}</h3>
+                {w.difficulty && (
+                  <span class="text-xs px-2 py-1 rounded-full bg-electric-cyan/10 text-electric-cyan uppercase tracking-wide">
+                    {w.difficulty}
+                  </span>
+                )}
+              </div>
+              {description && (
+                <p class="text-sm text-cyber-grey mt-2">
+                  {description}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
 </Layout>

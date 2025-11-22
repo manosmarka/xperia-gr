@@ -11,6 +11,23 @@ export default defineType({
       type: 'string',
     }),
     defineField({
+      name: 'eventNameEl',
+      title: 'Event Name (Greek)',
+      type: 'string',
+    }),
+    defineField({
+      name: 'summary',
+      title: 'Short Summary',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'summaryEl',
+      title: 'Short Summary (Greek)',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
       name: 'startDateTime',
       title: 'Start Date/Time',
       type: 'datetime',

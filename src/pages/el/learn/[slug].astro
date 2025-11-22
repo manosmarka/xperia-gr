@@ -1,0 +1,72 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { sanityClient } from '../../../lib/sanity';
+import { PortableText } from '@portabletext/react';
+
+export async function getStaticPaths() {
+  const query = `*[_type == "article"]{ "slug": slug.current }`;
+  const articles = await sanityClient.fetch(query);
+  
+  return articles.map((article: any) => ({
+    params: { slug: article.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const query = `*[_type == "article" && slug.current == $slug][0]{
+  title,
+  titleEl,
+  publishedAt,
+  "imageUrl": mainImage.asset->url,
+  body,
+  bodyEl,
+  author->{name, "image": image.asset->url}
+}`;
+
+const article = await sanityClient.fetch(query, { slug });
+
+if (!article) {
+  return Astro.redirect('/404');
+}
+
+const localizedTitle = article.titleEl || article.title;
+const localizedBody = article.bodyEl && article.bodyEl.length ? article.bodyEl : article.body;
+---
+
+<Layout title={`${localizedTitle} - Xperia.gr`}>
+  <article class="container mx-auto px-4 max-w-3xl py-12">
+    {article.imageUrl && (
+      <img 
+        src={article.imageUrl} 
+        alt={localizedTitle} 
+        class="w-full h-96 object-cover rounded-xl mb-8"
+      />
+    )}
+
+    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 font-orbitron">
+      {localizedTitle}
+    </h1>
+
+    <div class="flex items-center gap-4 mb-8 text-gray-400">
+      {article.author && (
+        <div class="flex items-center gap-2">
+          {article.author.image && (
+            <img 
+              src={article.author.image} 
+              alt={article.author.name} 
+              class="w-10 h-10 rounded-full object-cover"
+            />
+          )}
+          <span>{article.author.name}</span>
+        </div>
+      )}
+      <span>•</span>
+      <time>{new Date(article.publishedAt).toLocaleDateString('el-GR')}</time>
+    </div>
+
+    <div class="prose prose-invert prose-lg max-w-none">
+      <PortableText value={localizedBody} />
+    </div>
+  </article>
+</Layout>

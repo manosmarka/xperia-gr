@@ -1,7 +1,64 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { sanityClient } from '../../lib/sanity';
+
+const query = `*[_type == "kidsResource"] | order(_createdAt desc){
+  title,
+  titleEl,
+  ageGroup,
+  videoUrl,
+  instructions,
+  instructionsEl,
+  safetyNote,
+  safetyNoteEl
+}`;
+
+const resources = await sanityClient.fetch(query);
 ---
+
 <Layout title="Τεχνητή Νοημοσύνη για Παιδιά - Xperia.gr">
-  <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">ΤΝ για Παιδιά</h1>
-  <p class="text-cyber-grey">Δραστηριότητες, παιχνίδια και απλές εξηγήσεις για την Τεχνητή Νοημοσύνη, ειδικά σχεδιασμένα για παιδιά και γονείς.</p>
+  <div class="container mx-auto px-4">
+    <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">ΤΝ για Παιδιά</h1>
+
+    {resources.length === 0 && (
+      <p class="text-cyber-grey">Δεν υπάρχουν ακόμη δραστηριότητες. Πρόσθεσε "AI for Kids Resource" στο Sanity για να εμφανιστούν εδώ.</p>
+    )}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {resources.map((r: any) => {
+        const title = r.titleEl || r.title;
+        const safety = r.safetyNoteEl || r.safetyNote;
+
+        return (
+          <article class="bg-midnight-glass/70 border border-white/10 rounded-2xl p-6 flex flex-col gap-3">
+            <header class="flex items-baseline justify-between gap-4">
+              <h2 class="text-xl font-semibold text-starlight">{title}</h2>
+              {r.ageGroup && (
+                <span class="text-xs px-2 py-1 rounded-full bg-electric-cyan/10 text-electric-cyan uppercase tracking-wide">
+                  Ηλικίες {r.ageGroup}
+                </span>
+              )}
+            </header>
+
+            {safety && (
+              <p class="text-sm text-cyber-grey">Σημείωση ασφαλείας: {safety}</p>
+            )}
+
+            {r.videoUrl && (
+              <div class="mt-2">
+                <a
+                  href={r.videoUrl}
+                  class="inline-block text-electric-cyan hover:underline text-sm font-semibold"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Δες το βίντεο της δραστηριότητας
+                </a>
+              </div>
+            )}
+          </article>
+        );
+      })}
+    </div>
+  </div>
 </Layout>

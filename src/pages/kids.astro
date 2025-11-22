@@ -1,7 +1,55 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { sanityClient } from '../lib/sanity';
+
+const query = `*[_type == "kidsResource"] | order(_createdAt desc){
+  title,
+  ageGroup,
+  videoUrl,
+  safetyNote
+}`;
+
+const resources = await sanityClient.fetch(query);
 ---
+
 <Layout title="AI for Kids - Xperia.gr">
-  <h1 class="text-4xl font-orbitron font-bold mb-8 text-holo-teal">AI for Kids</h1>
-  <p>Coming soon...</p>
+  <div class="container mx-auto px-4">
+    <h1 class="text-4xl font-orbitron font-bold mb-8 text-holo-teal">AI for Kids</h1>
+
+    {resources.length === 0 && (
+      <p class="text-cyber-grey">No kids resources yet. Add some "AI for Kids Resource" documents in Sanity.</p>
+    )}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {resources.map((r: any) => (
+        <article class="bg-midnight-glass/70 border border-white/10 rounded-2xl p-6 flex flex-col gap-3">
+          <header class="flex items-baseline justify-between gap-4">
+            <h2 class="text-xl font-semibold text-starlight">{r.title}</h2>
+            {r.ageGroup && (
+              <span class="text-xs px-2 py-1 rounded-full bg-electric-cyan/10 text-electric-cyan uppercase tracking-wide">
+                Ages {r.ageGroup}
+              </span>
+            )}
+          </header>
+
+          {r.safetyNote && (
+            <p class="text-sm text-cyber-grey">Safety: {r.safetyNote}</p>
+          )}
+
+          {r.videoUrl && (
+            <div class="mt-2">
+              <a
+                href={r.videoUrl}
+                class="inline-block text-electric-cyan hover:underline text-sm font-semibold"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Watch activity video
+              </a>
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
 </Layout>

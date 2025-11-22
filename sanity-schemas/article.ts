@@ -11,6 +11,11 @@ export default defineType({
       type: 'string',
     }),
     defineField({
+      name: 'titleEl',
+      title: 'Title (Greek)',
+      type: 'string',
+    }),
+    defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
@@ -50,6 +55,12 @@ export default defineType({
     defineField({
       name: 'body',
       title: 'Body',
+      type: 'array',
+      of: [{type: 'block'}, {type: 'image'}]
+    }),
+    defineField({
+      name: 'bodyEl',
+      title: 'Body (Greek)',
       type: 'array',
       of: [{type: 'block'}, {type: 'image'}]
     }),

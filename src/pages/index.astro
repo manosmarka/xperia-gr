@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
+import { sanityClient } from '../lib/sanity';
 
 const latestArticles = [
   {
@@ -32,6 +33,15 @@ const newsTicker = [
   "AI regulation talks in EU parliament",
   "New AI tools for education announced"
 ];
+
+// Fetch a few upcoming workshops/seminars from Sanity
+const workshopsQuery = `*[_type == "workshop"] | order(startDateTime asc)[0..2]{
+  eventName,
+  summary,
+  difficulty
+}`;
+
+const workshops = await sanityClient.fetch(workshopsQuery);
 ---
 
 <Layout title="Xperia.gr - AI Education Platform">
@@ -121,25 +131,41 @@ const newsTicker = [
     </ul>
   </section>
 
-  <!-- Workshops Carousel Placeholder -->
-  <section class="mb-20 relative overflow-hidden rounded-3xl bg-gradient-to-r from-midnight-glass to-deep-void border border-white/10 p-8 md:p-12">
-    <div class="absolute top-0 right-0 w-64 h-64 bg-electric-cyan/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-      <div>
-        <h2 class="text-3xl font-orbitron font-bold mb-4">Upcoming Workshops</h2>
-        <p class="text-cyber-grey mb-6 max-w-md">
-          Join our interactive sessions and learn from industry experts. From beginner basics to advanced prompt engineering.
+  <!-- Workshops & Seminars Summary -->
+  <section class="mb-20 rounded-3xl bg-gradient-to-r from-midnight-glass to-deep-void border border-white/10 p-8 md:p-12">
+    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+      <div class="max-w-md">
+        <h2 class="text-3xl font-orbitron font-bold mb-4">Workshops &amp; Seminars</h2>
+        <p class="text-cyber-grey mb-6">
+          Join focused, hands-on sessions to build real AI skills — from your first prompt to advanced workflows.
         </p>
         <a href="/workshops" class="inline-block bg-neural-blue text-white font-bold py-3 px-8 rounded-2xl hover:bg-neural-blue/80 transition-colors">
-          View Calendar
+          View all workshops
         </a>
       </div>
-      <div class="flex gap-4">
-        <div class="w-64 bg-deep-void/50 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
-          <div class="text-electric-cyan font-bold mb-1">DEC 05</div>
-          <div class="font-bold text-lg mb-2">AI for Small Business</div>
-          <div class="text-sm text-cyber-grey">Online • 18:00</div>
-        </div>
+
+      <div class="flex-1 grid gap-4">
+        {workshops.length === 0 && (
+          <p class="text-cyber-grey text-sm">No workshops published yet. Add some in Sanity to see them here.</p>
+        )}
+
+        {workshops.map((w: any) => (
+          <div class="bg-deep-void/60 border border-white/10 rounded-2xl p-4 hover:border-electric-cyan/60 transition-colors">
+            <div class="flex items-baseline justify-between gap-4">
+              <h3 class="font-semibold text-starlight">{w.eventName}</h3>
+              {w.difficulty && (
+                <span class="text-xs px-2 py-1 rounded-full bg-electric-cyan/10 text-electric-cyan uppercase tracking-wide">
+                  {w.difficulty}
+                </span>
+              )}
+            </div>
+            {w.summary && (
+              <p class="text-sm text-cyber-grey mt-2">
+                {w.summary}
+              </p>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   </section>
