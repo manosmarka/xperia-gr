@@ -17,7 +17,7 @@ export default defineConfig({
   integrations: [react(), partytown(), sitemap(), clerk()],
 
   i18n: {
-    defaultLocale: "el",
+    defaultLocale: "en",
     locales: ["el", "en"],
   }
 });

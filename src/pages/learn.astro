@@ -1,7 +1,49 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { sanityClient } from '../lib/sanity';
+
+// GROQ query to fetch articles
+const query = `*[_type == "article"] | order(publishedAt desc) {
+  title,
+  "slug": slug.current,
+  publishedAt,
+  "imageUrl": mainImage.asset->url,
+  body
+}`;
+
+const articles = await sanityClient.fetch(query);
 ---
+
 <Layout title="Learn AI - Xperia.gr">
-  <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">Learn AI</h1>
-  <p>Coming soon...</p>
+  <div class="container mx-auto px-4">
+    <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">Learn AI</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {articles.length === 0 && <p>No articles found yet.</p>}
+
+      {articles.map((post: any) => (
+        <article class="bg-gray-900 rounded-xl overflow-hidden border border-gray-800 hover:border-electric-cyan transition-colors">
+          {post.imageUrl && (
+            <img 
+              src={post.imageUrl} 
+              alt={post.title} 
+              class="w-full h-48 object-cover"
+            />
+          )}
+          <div class="p-6">
+            <p class="text-sm text-gray-400 mb-2">
+              {new Date(post.publishedAt).toLocaleDateString()}
+            </p>
+            <h2 class="text-xl font-bold mb-4 text-white">{post.title}</h2>
+            <a 
+              href={`/learn/${post.slug}`} 
+              class="text-electric-cyan hover:underline font-semibold"
+            >
+              Read Article →
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
 </Layout>

@@ -14,5 +14,28 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
+    templates: (prev) => [
+      ...prev,
+      {
+        id: 'online-workshop',
+        title: 'New Online Workshop',
+        schemaType: 'workshop',
+        value: {
+          format: 'online',
+          difficulty: 'beginner',
+          title: 'Workshop: ',
+        },
+      },
+      {
+        id: 'daily-news',
+        title: 'Daily AI News',
+        schemaType: 'news',
+        value: () => ({
+          headline: `AI Update - ${new Date().toLocaleDateString()}`,
+          date: new Date().toISOString(),
+          tags: ['AI', 'Update'],
+        }),
+      },
+    ],
   },
 })

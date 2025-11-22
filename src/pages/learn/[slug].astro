@@ -1,0 +1,73 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { sanityClient } from '../../lib/sanity';
+import { PortableText } from '@portabletext/react';
+
+export async function getStaticPaths() {
+  const query = `*[_type == "article"]{ "slug": slug.current }`;
+  const articles = await sanityClient.fetch(query);
+  
+  return articles.map((article: any) => ({
+    params: { slug: article.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const query = `*[_type == "article" && slug.current == $slug][0]{
+  title,
+  publishedAt,
+  "imageUrl": mainImage.asset->url,
+  body,
+  author->{name, "image": image.asset->url}
+}`;
+
+const article = await sanityClient.fetch(query, { slug });
+
+if (!article) {
+  return Astro.redirect('/404');
+}
+---
+
+<Layout title={`${article.title} - Xperia.gr`}>
+  <article class="container mx-auto px-4 max-w-3xl py-12">
+    {article.imageUrl && (
+      <img 
+        src={article.imageUrl} 
+        alt={article.title} 
+        class="w-full h-96 object-cover rounded-xl mb-8"
+      />
+    )}
+
+    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 font-orbitron">
+      {article.title}
+    </h1>
+
+    <div class="flex items-center gap-4 mb-8 text-gray-400">
+      {article.author && (
+        <div class="flex items-center gap-2">
+          {article.author.image && (
+            <img 
+              src={article.author.image} 
+              alt={article.author.name} 
+              class="w-10 h-10 rounded-full object-cover"
+            />
+          )}
+          <span>{article.author.name}</span>
+        </div>
+      )}
+      <span>•</span>
+      <time>{new Date(article.publishedAt).toLocaleDateString()}</time>
+    </div>
+
+    <div class="prose prose-invert prose-lg max-w-none">
+      {/* 
+        Note: To render PortableText properly in Astro, we might need a dedicated 
+        Astro integration or a React component wrapper. 
+        For now, we are outputting raw JSON to show data is flowing, 
+        or using a simple text fallback if PortableText component isn't configured.
+      */}
+      <PortableText value={article.body} />
+    </div>
+  </article>
+</Layout>
