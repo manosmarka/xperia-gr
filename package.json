@@ -1,0 +1,30 @@
+{
+  "name": "xperia-gr",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "sanity": "sanity"
+  },
+  "dependencies": {
+    "@astrojs/partytown": "^2.1.4",
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "^3.6.0",
+    "@clerk/astro": "^2.16.2",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/orbitron": "^5.2.8",
+    "@sanity/vision": "^4.18.0",
+    "@tailwindcss/vite": "^4.1.17",
+    "@types/react": "^19.2.6",
+    "@types/react-dom": "^19.2.3",
+    "astro": "^5.16.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sanity": "^4.18.0",
+    "styled-components": "^6.1.19",
+    "tailwindcss": "^4.1.17"
+  }
+}

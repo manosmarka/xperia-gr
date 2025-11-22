@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --color-deep-void: #050A18;
+  --color-midnight-glass: #0F172A;
+  --color-electric-cyan: #00F0FF;
+  --color-neural-blue: #2D7FF9;
+  --color-holo-teal: #00D2C1;
+  --color-starlight: #F1F5F9;
+  --color-cyber-grey: #94A3B8;
+
+  --font-orbitron: "Orbitron", sans-serif;
+  --font-inter: "Inter", sans-serif;
+}
+
+/* Custom Utilities */
+.glow-text {
+  text-shadow: 0 0 10px var(--color-electric-cyan);
+}
+
+.glow-box {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+}
+
+body {
+  @apply bg-deep-void text-starlight font-inter;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-orbitron;
+}

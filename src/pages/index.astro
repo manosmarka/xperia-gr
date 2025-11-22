@@ -1,0 +1,156 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+
+const latestArticles = [
+  {
+    title: "Intro to ChatGPT",
+    body: "Learn the basics of ChatGPT and how to use it effectively for your daily tasks.",
+    href: "/articles/intro-to-chatgpt",
+    date: "Nov 22, 2025",
+    tags: ["Beginner", "Tools"]
+  },
+  {
+    title: "AI Ethics 101",
+    body: "Understanding the ethical implications of artificial intelligence in modern society.",
+    href: "/articles/ai-ethics",
+    date: "Nov 21, 2025",
+    tags: ["Ethics"]
+  },
+  {
+    title: "Generative AI for Art",
+    body: "Explore how generative AI is transforming the creative landscape for artists.",
+    href: "/articles/gen-ai-art",
+    date: "Nov 20, 2025",
+    tags: ["Creative", "Tutorials"]
+  }
+];
+
+const newsTicker = [
+  "OpenAI releases new model",
+  "Google Gemini update available",
+  "AI regulation talks in EU parliament",
+  "New AI tools for education announced"
+];
+---
+
+<Layout title="Xperia.gr - AI Education Platform">
+	<!-- Hero Section -->
+  <section class="flex flex-col-reverse md:flex-row items-center justify-between min-h-[60vh] gap-12 mb-16">
+    <div class="flex-1 space-y-6 text-center md:text-left">
+      <h1 class="text-5xl md:text-7xl font-orbitron font-bold leading-tight">
+        Demystifying <span class="text-transparent bg-clip-text bg-gradient-to-r from-electric-cyan to-neural-blue glow-text">AI</span><br />
+        for Greece
+      </h1>
+      <p class="text-xl text-cyber-grey max-w-lg mx-auto md:mx-0">
+        Your gateway to understanding Artificial Intelligence. 
+        Learn, explore, and create with confidence.
+      </p>
+      <div class="flex gap-4 justify-center md:justify-start pt-4">
+        <a href="/workshops" class="bg-electric-cyan text-deep-void font-bold py-3 px-8 rounded-2xl hover:glow-box transition-all">
+          Start Learning
+        </a>
+        <a href="/news" class="border border-electric-cyan text-electric-cyan font-bold py-3 px-8 rounded-2xl hover:bg-electric-cyan/10 transition-all">
+          Latest News
+        </a>
+      </div>
+    </div>
+    
+    <div class="flex-1 flex justify-center items-center relative">
+      <!-- 3D Logo Placeholder / Effect -->
+      <div class="relative w-64 h-64 md:w-96 md:h-96">
+        <div class="absolute inset-0 bg-electric-cyan/20 rounded-full blur-3xl animate-pulse"></div>
+        <div class="relative z-10 w-full h-full bg-gradient-to-br from-midnight-glass to-deep-void border border-white/10 rounded-3xl flex items-center justify-center glow-box rotate-3 hover:rotate-0 transition-transform duration-500">
+          <span class="text-6xl font-orbitron font-bold text-electric-cyan glow-text">X</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- News Ticker -->
+  <div class="w-full bg-midnight-glass border-y border-white/5 overflow-hidden py-2 mb-16">
+    <div class="whitespace-nowrap animate-marquee inline-block">
+      {newsTicker.map(item => (
+        <span class="mx-8 text-cyber-grey font-mono">
+          <span class="text-electric-cyan mr-2">>></span> {item}
+        </span>
+      ))}
+       {newsTicker.map(item => (
+        <span class="mx-8 text-cyber-grey font-mono">
+          <span class="text-electric-cyan mr-2">>></span> {item}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <!-- Who is this for? -->
+  <section class="mb-20">
+    <h2 class="text-3xl font-orbitron font-bold mb-8 text-center md:text-left">Who is this for?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="p-6 rounded-2xl bg-midnight-glass/50 border border-white/5 hover:border-electric-cyan/50 transition-colors">
+        <h3 class="text-xl font-bold text-starlight mb-2">Students</h3>
+        <p class="text-cyber-grey">Master the tools that will define your future career.</p>
+      </div>
+      <div class="p-6 rounded-2xl bg-midnight-glass/50 border border-white/5 hover:border-electric-cyan/50 transition-colors">
+        <h3 class="text-xl font-bold text-starlight mb-2">Parents</h3>
+        <p class="text-cyber-grey">Guide your children safely through the AI revolution.</p>
+      </div>
+      <div class="p-6 rounded-2xl bg-midnight-glass/50 border border-white/5 hover:border-electric-cyan/50 transition-colors">
+        <h3 class="text-xl font-bold text-starlight mb-2">Business</h3>
+        <p class="text-cyber-grey">Integrate AI into your workflow for maximum efficiency.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Articles -->
+  <section class="mb-20">
+    <div class="flex justify-between items-end mb-8">
+      <h2 class="text-3xl font-orbitron font-bold">Latest Articles</h2>
+      <a href="/learn" class="text-electric-cyan hover:underline">View all</a>
+    </div>
+    <ul role="list" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {latestArticles.map((article) => (
+        <Card
+          href={article.href}
+          title={article.title}
+          body={article.body}
+          date={article.date}
+          tags={article.tags}
+        />
+      ))}
+    </ul>
+  </section>
+
+  <!-- Workshops Carousel Placeholder -->
+  <section class="mb-20 relative overflow-hidden rounded-3xl bg-gradient-to-r from-midnight-glass to-deep-void border border-white/10 p-8 md:p-12">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-electric-cyan/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+      <div>
+        <h2 class="text-3xl font-orbitron font-bold mb-4">Upcoming Workshops</h2>
+        <p class="text-cyber-grey mb-6 max-w-md">
+          Join our interactive sessions and learn from industry experts. From beginner basics to advanced prompt engineering.
+        </p>
+        <a href="/workshops" class="inline-block bg-neural-blue text-white font-bold py-3 px-8 rounded-2xl hover:bg-neural-blue/80 transition-colors">
+          View Calendar
+        </a>
+      </div>
+      <div class="flex gap-4">
+        <div class="w-64 bg-deep-void/50 p-4 rounded-xl border border-white/10 backdrop-blur-sm">
+          <div class="text-electric-cyan font-bold mb-1">DEC 05</div>
+          <div class="font-bold text-lg mb-2">AI for Small Business</div>
+          <div class="text-sm text-cyber-grey">Online • 18:00</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+</style>

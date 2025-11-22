@@ -1,0 +1,33 @@
+---
+import '../styles/global.css';
+import '@fontsource/orbitron';
+import '@fontsource/inter';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+const { currentLocale } = Astro;
+---
+
+<!doctype html>
+<html lang={currentLocale || 'el'}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Xperia.gr - AI Education Platform" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body class="flex flex-col min-h-screen bg-deep-void text-starlight font-inter selection:bg-electric-cyan selection:text-deep-void">
+    <Navbar />
+    <main class="flex-grow container mx-auto px-4 py-8">
+		  <slot />
+    </main>
+    <Footer />
+	</body>
+</html>
