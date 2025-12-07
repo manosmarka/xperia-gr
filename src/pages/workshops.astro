@@ -6,6 +6,7 @@ const query = `*[_type == "workshop"] | order(startDateTime asc){
   eventName,
   summary,
   startDateTime,
+  onRequest,
   location,
   price,
   difficulty,
@@ -40,7 +41,14 @@ const workshops = await sanityClient.fetch(query);
           )}
 
           <div class="text-xs text-cyber-grey flex flex-wrap gap-4 mt-2">
-            {w.startDateTime && (
+            {w.onRequest && (
+              <span>
+                <span class="font-semibold text-starlight">When:</span>
+                {' '}
+                Upon request
+              </span>
+            )}
+            {!w.onRequest && w.startDateTime && (
               <span>
                 <span class="font-semibold text-starlight">When:</span>
                 {' '}

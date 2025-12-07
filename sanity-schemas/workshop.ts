@@ -33,6 +33,12 @@ export default defineType({
       type: 'datetime',
     }),
     defineField({
+      name: 'onRequest',
+      title: 'Date on Request',
+      type: 'boolean',
+      description: 'Enable this when the exact date/time is arranged upon request instead of fixed.',
+    }),
+    defineField({
       name: 'location',
       title: 'Location',
       type: 'string',
