@@ -1,0 +1,106 @@
+---
+---
+<canvas id="particle-canvas" class="fixed inset-0 z-[-1] pointer-events-none opacity-40"></canvas>
+
+<script>
+  const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement;
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let particles: Particle[] = [];
+    const particleCount = 160; 
+    const mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+    
+    const colors = ['#8ecae6', '#219ebc', '#023047', '#ffb703', '#fb8500'];
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.targetX = (e.clientX - window.innerWidth / 2) / 50;
+      mouse.targetY = (e.clientY - window.innerHeight / 2) / 50;
+    });
+
+    class Particle {
+      x: number;
+      y: number;
+      z: number; // For 3D Parallax
+      w: number;
+      h: number;
+      baseX: number;
+      baseY: number;
+      color: string;
+      rotation: number;
+      type: 'dash' | 'dot';
+
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.z = Math.random() * 1.5 + 0.5; // Z depth
+        this.baseX = this.x;
+        this.baseY = this.y;
+        this.type = Math.random() > 0.3 ? 'dash' : 'dot';
+        this.w = (this.type === 'dash' ? Math.random() * 2 + 1 : Math.random() * 1.5 + 0.5);
+        this.h = (this.type === 'dash' ? Math.random() * 6 + 2 : this.w);
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.rotation = Math.random() * 360;
+      }
+
+      update() {
+        // Subtle 3D Parallax based on Mouse
+        mouse.x += (mouse.targetX - mouse.x) * 0.05;
+        mouse.y += (mouse.targetY - mouse.y) * 0.05;
+
+        // Current position = base + parallax offset * depth
+        this.x = this.baseX + mouse.x * this.z;
+        this.y = this.baseY + mouse.y * this.z;
+
+        // Slow drift
+        this.baseY += 0.1 * this.z;
+        this.baseX += 0.05 * (this.z - 1);
+
+        // Loop boundaries
+        if (this.baseY > canvas.height) this.baseY = -20;
+        if (this.baseX > canvas.width) this.baseX = 0;
+        if (this.baseX < 0) this.baseX = canvas.width;
+      }
+
+      draw() {
+        if (!ctx) return;
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.rotation * Math.PI) / 180);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = 0.4 / this.z; // Further particles are fainter
+        
+        if (this.type === 'dash') {
+            ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
+        } else {
+            ctx.beginPath();
+            ctx.arc(0, 0, this.w, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    function init() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animate() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', init);
+    init();
+    animate();
+  }
+</script>

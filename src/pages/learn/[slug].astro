@@ -1,73 +1,95 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { sanityClient } from '../../lib/sanity';
-import { PortableText } from '@portabletext/react';
+import { articles } from '../../data';
 
-export async function getStaticPaths() {
-  const query = `*[_type == "article"]{ "slug": slug.current }`;
-  const articles = await sanityClient.fetch(query);
-  
-  return articles.map((article: any) => ({
+export function getStaticPaths() {
+  return articles.map((article) => ({
     params: { slug: article.slug },
+    props: { article },
   }));
 }
 
-const { slug } = Astro.params;
+const { article } = Astro.props;
 
-const query = `*[_type == "article" && slug.current == $slug][0]{
-  title,
-  publishedAt,
-  "imageUrl": mainImage.asset->url,
-  body,
-  author->{name, "image": image.asset->url}
-}`;
-
-const article = await sanityClient.fetch(query, { slug });
-
-if (!article) {
-  return Astro.redirect('/404');
-}
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": article.title,
+  "image": [
+    `https://xperia.gr${article.imageUrl}`
+  ],
+  "datePublished": article.publishedAt,
+  "author": [{
+    "@type": "Person",
+    "name": article.author?.name || "Xperia.gr Admin"
+  }]
+};
 ---
 
-<Layout title={`${article.title} - Xperia.gr`}>
-  <article class="container mx-auto px-4 max-w-3xl py-12">
+<Layout 
+  title={`${article.title} - Xperia.gr`}
+  description={article.body.substring(0, 150).replace(/<[^>]*>?/gm, '') + '...'}
+  image={article.imageUrl}
+  type="article"
+  jsonLd={articleSchema}
+>
+  <article class="px-6 md:px-12 max-w-[850px] mx-auto py-32">
+    <a href="/learn" class="inline-flex items-center gap-3 text-primary hover:text-secondary mb-16 font-black uppercase tracking-widest text-[10px] transition-all group scale-95 origin-left">
+        <span class="material-symbols-outlined text-lg leading-none group-hover:-translate-x-1 transition-transform">arrow_back</span>
+        Back to Library
+    </a>
+
+    <header class="mb-16">
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-on-surface mb-10 tracking-tight leading-[1.1]">
+        {article.title}
+      </h1>
+
+      <div class="flex flex-wrap items-center gap-6 text-[10px] font-black tracking-widest uppercase text-on-surface-variant/60">
+        {article.author && (
+          <div class="flex items-center gap-3">
+            {article.author.image && (
+              <img 
+                src={article.author.image} 
+                alt={article.author.name} 
+                class="w-10 h-10 rounded-full object-cover border border-outline-variant/30 shadow-sm"
+              />
+            )}
+            <span class="text-on-surface">{article.author.name}</span>
+          </div>
+        )}
+        {article.author && <span class="opacity-30">•</span>}
+        <time class="bg-surface-container py-1 px-3 rounded-full">{new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</time>
+      </div>
+    </header>
+
     {article.imageUrl && (
-      <img 
-        src={article.imageUrl} 
-        alt={article.title} 
-        class="w-full h-96 object-cover rounded-xl mb-8"
-      />
+      <div class="rounded-[2.5rem] overflow-hidden mb-20 shadow-[0_45px_80px_-20px_rgba(0,0,0,0.1)] border border-outline-variant/30">
+          <img 
+            src={article.imageUrl} 
+            alt={article.title} 
+            class="w-full h-auto max-h-[550px] object-cover"
+          />
+      </div>
     )}
 
-    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 font-orbitron">
-      {article.title}
-    </h1>
-
-    <div class="flex items-center gap-4 mb-8 text-gray-400">
-      {article.author && (
-        <div class="flex items-center gap-2">
-          {article.author.image && (
-            <img 
-              src={article.author.image} 
-              alt={article.author.name} 
-              class="w-10 h-10 rounded-full object-cover"
-            />
-          )}
-          <span>{article.author.name}</span>
-        </div>
-      )}
-      <span>•</span>
-      <time>{new Date(article.publishedAt).toLocaleDateString()}</time>
-    </div>
-
-    <div class="prose prose-invert prose-lg max-w-none">
-      {/* 
-        Note: To render PortableText properly in Astro, we might need a dedicated 
-        Astro integration or a React component wrapper. 
-        For now, we are outputting raw JSON to show data is flowing, 
-        or using a simple text fallback if PortableText component isn't configured.
-      */}
-      <PortableText value={article.body} />
+    {/* Prose Styling for Light Luxurious theme */}
+    <div class="prose prose-lg max-w-none text-on-surface-variant leading-[1.8] tracking-tight
+      prose-headings:text-on-surface prose-headings:font-black prose-headings:tracking-tight prose-headings:mb-8 prose-headings:mt-16
+      prose-p:mb-8
+      prose-strong:text-on-surface prose-strong:font-black
+      prose-a:text-primary prose-a:font-black prose-a:no-underline hover:prose-a:text-secondary transition-colors
+      prose-img:rounded-3xl prose-img:shadow-xl prose-img:border prose-img:border-outline-variant/30
+      prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-surface-container-low/50 prose-blockquote:px-8 prose-blockquote:py-4 prose-blockquote:rounded-r-2xl prose-blockquote:text-on-surface prose-blockquote:italic
+    " set:html={article.body} />
+    
+    <div class="mt-24 pt-12 border-t border-outline-variant/20">
+       <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+          <p class="text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant/40">Share this Intelligence</p>
+          <div class="flex gap-4">
+             <button class="w-10 h-10 rounded-full bg-surface-container hover:bg-primary hover:text-white transition-all duration-400 flex items-center justify-center text-on-surface-variant"><span class="material-symbols-outlined text-lg">share</span></button>
+             <button class="w-10 h-10 rounded-full bg-surface-container hover:bg-primary hover:text-white transition-all duration-400 flex items-center justify-center text-on-surface-variant"><span class="material-symbols-outlined text-lg">bookmark</span></button>
+          </div>
+       </div>
     </div>
   </article>
 </Layout>

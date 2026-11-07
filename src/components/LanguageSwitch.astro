@@ -1,17 +1,17 @@
 ---
 const { currentLocale } = Astro;
 ---
-<div class="flex gap-2 text-sm border-l border-cyber-grey pl-4">
+<div class="flex gap-4 text-[10px] items-center border-l border-outline-variant/30 pl-8 h-4 font-black uppercase tracking-widest">
   <a 
     href="/el" 
-    class={`font-bold transition-colors ${currentLocale === 'el' ? 'text-electric-cyan' : 'text-starlight hover:text-electric-cyan'}`}
+    class={`transition-all duration-400 ${currentLocale === 'el' ? 'text-primary scale-110' : 'text-on-surface-variant/40 hover:text-on-surface'}`}
   >
     EL
   </a>
-  <span class="text-cyber-grey">|</span>
+  <span class="text-outline-variant/30 scale-150">/</span>
   <a 
     href="/" 
-    class={`font-bold transition-colors ${currentLocale === 'en' ? 'text-electric-cyan' : 'text-starlight hover:text-electric-cyan'}`}
+    class={`transition-all duration-400 ${currentLocale === 'en' ? 'text-primary scale-110' : 'text-on-surface-variant/40 hover:text-on-surface'}`}
   >
     EN
   </a>

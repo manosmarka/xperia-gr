@@ -1,63 +1,58 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { sanityClient } from '../../lib/sanity';
-
-const query = `*[_type == "kidsResource"] | order(_createdAt desc){
-  title,
-  titleEl,
-  ageGroup,
-  videoUrl,
-  instructions,
-  instructionsEl,
-  safetyNote,
-  safetyNoteEl
-}`;
-
-const resources = await sanityClient.fetch(query);
+import { kidsResources as resources } from '../../data';
 ---
 
-<Layout title="Τεχνητή Νοημοσύνη για Παιδιά - Xperia.gr">
-  <div class="container mx-auto px-4">
-    <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">ΤΝ για Παιδιά</h1>
+<Layout title="ΤΝ για Παιδιά - Xperia.gr">
+  <div class="px-6 md:px-12 max-w-[1440px] mx-auto pt-24 pb-32">
+    <div class="mb-20 text-center max-w-3xl mx-auto">
+      <span class="text-secondary tracking-[0.25em] uppercase text-[10px] font-black mb-6 block font-inter antialiased">Μικροί Εξερευνητές</span>
+      <h1 class="text-5xl md:text-6xl font-black mb-6 font-inter text-on-surface tracking-tight">ΤΝ για <span class="text-secondary italic">Παιδιά</span></h1>
+      <p class="text-on-surface-variant text-lg leading-relaxed">Διαδραστικά, παιχνιδιοποιημένα μονοπάτια μάθησης σχεδιασμένα να καλλιεργούν την περιέργεια, τη δεοντολογία και την αυτοπεποίθηση στην επόμενη γενιά.</p>
+    </div>
 
-    {resources.length === 0 && (
-      <p class="text-cyber-grey">Δεν υπάρχουν ακόμη δραστηριότητες. Πρόσθεσε "AI for Kids Resource" στο Sanity για να εμφανιστούν εδώ.</p>
-    )}
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
       {resources.map((r: any) => {
         const title = r.titleEl || r.title;
         const safety = r.safetyNoteEl || r.safetyNote;
-
+        
         return (
-          <article class="bg-midnight-glass/70 border border-white/10 rounded-2xl p-6 flex flex-col gap-3">
-            <header class="flex items-baseline justify-between gap-4">
-              <h2 class="text-xl font-semibold text-starlight">{title}</h2>
-              {r.ageGroup && (
-                <span class="text-xs px-2 py-1 rounded-full bg-electric-cyan/10 text-electric-cyan uppercase tracking-wide">
-                  Ηλικίες {r.ageGroup}
-                </span>
-              )}
+          <article class="bg-white border border-outline-variant/40 rounded-[2rem] p-10 flex flex-col gap-6 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-all duration-500 group">
+            <header class="flex flex-col gap-4">
+              <div class="flex justify-between items-start">
+                {r.ageGroup && (
+                  <span class="text-[10px] px-3 py-1 rounded-full bg-secondary-container/30 text-secondary font-black tracking-widest uppercase shrink-0">
+                    Ηλικίες {r.ageGroup}
+                  </span>
+                )}
+              </div>
+              <h2 class="text-2xl font-bold text-on-surface group-hover:text-secondary transition-colors tracking-tight leading-tight">{title}</h2>
             </header>
 
             {safety && (
-              <p class="text-sm text-cyber-grey">Σημείωση ασφαλείας: {safety}</p>
+              <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20">
+                <p class="text-xs text-on-surface-variant leading-relaxed">
+                  <span class="font-black uppercase tracking-widest text-[9px] block mb-1 scale-95 origin-left">Προτεραιότητα Ασφάλειας:</span> 
+                  {safety}
+                </p>
+              </div>
             )}
 
-            {r.videoUrl && (
-              <div class="mt-2">
+            <div class="mt-auto pt-6">
+               {r.videoUrl && (
                 <a
                   href={r.videoUrl}
-                  class="inline-block text-electric-cyan hover:underline text-sm font-semibold"
+                  class="inline-flex items-center gap-2 text-primary hover:text-secondary text-sm font-black uppercase tracking-widest transition-colors scale-95 origin-left"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Δες το βίντεο της δραστηριότητας
+                  <span class="material-symbols-outlined text-lg">play_circle</span>
+                  Δείτε τη Δραστηριότητα
                 </a>
-              </div>
-            )}
+              )}
+            </div>
           </article>
-        );
+        )
       })}
     </div>
   </div>

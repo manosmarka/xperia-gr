@@ -1,85 +1,105 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { sanityClient } from '../lib/sanity';
+import { workshops } from '../data';
 
-const query = `*[_type == "workshop"] | order(startDateTime asc){
-  eventName,
-  summary,
-  startDateTime,
-  onRequest,
-  location,
-  price,
-  difficulty,
-  bookingUrl
-}`;
-
-const workshops = await sanityClient.fetch(query);
+const workshopsSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": workshops.map((w, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "item": {
+      "@type": "Event",
+      "name": w.eventName,
+      "description": w.summary,
+      "startDate": w.startDateTime || "TBD",
+      "location": {
+        "@type": "Place",
+        "name": w.location || "Online",
+        "address": w.location || "Online"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": w.price || 0,
+        "priceCurrency": "EUR"
+      }
+    }
+  }))
+};
 ---
 
-<Layout title="Workshops - Xperia.gr">
-  <div class="container mx-auto px-4">
-    <h1 class="text-4xl font-orbitron font-bold mb-8 text-electric-cyan">Workshops &amp; Seminars</h1>
+<Layout 
+  title="Workshops - Xperia.gr" 
+  description="Explore hands-on AI seminars and workshops tailored for Greece."
+>
+  <div class="px-6 md:px-12 max-w-[1440px] mx-auto pt-24 pb-32">
+    <div class="mb-20 text-center max-w-3xl mx-auto">
+       <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 mb-8">
+        <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+        <span class="text-primary text-[10px] font-black tracking-widest uppercase">Live Sessions</span>
+      </div>
+      <h1 class="text-5xl md:text-6xl font-black mb-6 font-inter text-on-surface tracking-tight">AI for <span class="text-primary italic">Professionals</span></h1>
+      <p class="text-on-surface-variant text-lg leading-relaxed">Professional, highly actionable seminars designed to accelerate your workflow and integrate intelligence into your business.</p>
+    </div>
 
     {workshops.length === 0 && (
-      <p class="text-cyber-grey">No workshops have been published yet. Add some in Sanity to see them here.</p>
+      <div class="text-on-surface-variant font-mono border border-dashed border-outline-variant/30 p-16 rounded-3xl text-center bg-surface-container-low/30 shadow-inner">No workshops currently available.</div>
     )}
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
       {workshops.map((w: any) => (
-        <article class="bg-midnight-glass/70 border border-white/10 rounded-2xl p-6 flex flex-col gap-3">
-          <header class="flex items-baseline justify-between gap-4">
-            <h2 class="text-xl font-semibold text-starlight">{w.eventName}</h2>
-            {w.difficulty && (
-              <span class="text-xs px-2 py-1 rounded-full bg-electric-cyan/10 text-electric-cyan uppercase tracking-wide">
-                {w.difficulty}
-              </span>
-            )}
+        <article class="bg-white border border-outline-variant/40 rounded-[2.5rem] p-12 flex flex-col gap-8 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-all duration-500 group">
+          <header class="flex flex-col gap-4">
+             <div class="flex justify-between items-start">
+               {w.difficulty && (
+                <span class="text-[10px] px-3 py-1 rounded-full bg-primary-container/30 text-primary font-black tracking-widest uppercase">
+                  {w.difficulty}
+                </span>
+               )}
+            </div>
+            <h2 class="text-3xl font-bold text-on-surface group-hover:text-primary transition-colors tracking-tight leading-tight">{w.eventName}</h2>
           </header>
 
           {w.summary && (
-            <p class="text-sm text-cyber-grey">{w.summary}</p>
+            <p class="text-on-surface-variant text-base leading-relaxed">{w.summary}</p>
           )}
 
-          <div class="text-xs text-cyber-grey flex flex-wrap gap-4 mt-2">
+          <div class="flex flex-wrap gap-8 py-8 border-y border-outline-variant/10 text-xs font-black uppercase tracking-[0.1em] text-on-surface-variant/70">
             {w.onRequest && (
-              <span>
-                <span class="font-semibold text-starlight">When:</span>
-                {' '}
-                Upon request
-              </span>
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-[20px] text-primary">calendar_clock</span>
+                <span>Upon request</span>
+              </div>
             )}
             {!w.onRequest && w.startDateTime && (
-              <span>
-                <span class="font-semibold text-starlight">When:</span>
-                {' '}
-                {new Date(w.startDateTime).toLocaleString()}
-              </span>
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-[20px] text-primary">event</span>
+                <span>{new Date(w.startDateTime).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+              </div>
             )}
             {w.location && (
-              <span>
-                <span class="font-semibold text-starlight">Where:</span>
-                {' '}
-                {w.location}
-              </span>
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-[20px] text-primary">location_on</span>
+                <span>{w.location}</span>
+              </div>
             )}
             {typeof w.price === 'number' && (
-              <span>
-                <span class="font-semibold text-starlight">Price:</span>
-                {' '}
-                €{w.price.toFixed(2)}
-              </span>
+               <div class="flex items-center gap-3 text-on-surface">
+                <span class="material-symbols-outlined text-[20px] text-primary">sell</span>
+                <span>€{w.price.toFixed(2)}</span>
+              </div>
             )}
           </div>
 
           {w.bookingUrl && (
-            <div class="mt-4">
-              <a
+            <div class="mt-auto">
+               <a
                 href={w.bookingUrl}
-                class="inline-block bg-electric-cyan text-deep-void font-semibold text-sm py-2 px-4 rounded-xl hover:glow-box transition-all"
+                class="w-full text-center block px-8 py-4 rounded-full bg-on-surface text-white font-black uppercase tracking-widest text-sm hover:bg-primary transition-all duration-400 active:scale-95 shadow-md hover:shadow-xl"
                 target="_blank"
                 rel="noreferrer"
               >
-                Book your spot
+                Reserve Your Seat
               </a>
             </div>
           )}

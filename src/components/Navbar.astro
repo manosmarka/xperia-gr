@@ -4,24 +4,22 @@ import LanguageSwitch from './LanguageSwitch.astro';
 const { currentLocale } = Astro;
 const basePath = currentLocale === 'el' ? '/el' : '';
 ---
-<nav class="glass-panel sticky top-0 z-50 p-4 mb-8">
-  <div class="container mx-auto flex justify-between items-center">
-    <a href={basePath || '/'} class="text-2xl font-orbitron font-bold text-electric-cyan glow-text">
-      XPERIA.GR
-    </a>
-    <div class="hidden md:flex gap-6 items-center">
-      <a href={basePath || '/'} class="hover:text-electric-cyan transition-colors">Home</a>
-      <a href={`${basePath}/news`} class="hover:text-electric-cyan transition-colors">News</a>
-      <a href={`${basePath}/workshops`} class="hover:text-electric-cyan transition-colors">Workshops</a>
-      <a href={`${basePath}/learn`} class="hover:text-electric-cyan transition-colors">Learn</a>
-      <a href={`${basePath}/kids`} class="hover:text-electric-cyan transition-colors">For Kids</a>
-      
-      <LanguageSwitch />
-    </div>
-    
-    <!-- Mobile Menu Placeholder -->
-    <button class="md:hidden text-electric-cyan">
-      MENU
-    </button>
-  </div>
+<nav class="sticky top-0 w-full z-50 bg-white/70 backdrop-blur-[40px] shadow-[0_1px_0_rgba(0,0,0,0.05)] border-b border-black/5 mb-8">
+<div class="flex justify-between items-center px-6 md:px-12 py-4 max-w-[1440px] mx-auto w-full">
+<a href={basePath || '/'} class="text-2xl font-black tracking-tighter text-on-surface">Xperia<span class="text-primary">.gr</span></a>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-inter font-medium tracking-tight text-[1rem] text-on-surface-variant hover:text-secondary transition-colors duration-400" href={`${basePath}/kids`}>Kids AI</a>
+<a class="font-inter font-medium tracking-tight text-[1rem] text-on-surface-variant hover:text-secondary transition-colors duration-400" href={`${basePath}/workshops`}>Adult AI</a>
+<a class="font-inter font-medium tracking-tight text-[1rem] text-on-surface-variant hover:text-secondary transition-colors duration-400" href={`${basePath}/workshops`}>Business AI</a>
+<a class="font-inter font-medium tracking-tight text-[1rem] text-on-surface-variant hover:text-secondary transition-colors duration-400" href={`${basePath}/learn`}>Learn</a>
+<a class="font-inter font-medium tracking-tight text-[1rem] text-on-surface-variant hover:text-secondary transition-colors duration-400" href={`${basePath}/news`}>News</a>
+<LanguageSwitch />
+</div>
+<div class="flex items-center gap-4">
+<button class="md:hidden text-primary material-symbols-outlined">menu</button>
+<a href={`${basePath}/workshops`} class="hidden md:block px-6 py-2 rounded-full border border-primary text-primary font-inter font-medium tracking-tight text-[1rem] hover:bg-primary hover:text-white transition-all duration-400 active:scale-95">
+    Book Now
+</a>
+</div>
+</div>
 </nav>

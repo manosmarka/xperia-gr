@@ -1,53 +1,56 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { sanityClient } from '../lib/sanity';
-
-const query = `*[_type == "kidsResource"] | order(_createdAt desc){
-  title,
-  ageGroup,
-  videoUrl,
-  safetyNote
-}`;
-
-const resources = await sanityClient.fetch(query);
+import { kidsResources as resources } from '../data';
 ---
 
 <Layout title="AI for Kids - Xperia.gr">
-  <div class="container mx-auto px-4">
-    <h1 class="text-4xl font-orbitron font-bold mb-8 text-holo-teal">AI for Kids</h1>
+  <div class="px-6 md:px-12 max-w-[1440px] mx-auto pt-24 pb-32">
+    <div class="mb-20 text-center max-w-3xl mx-auto">
+      <span class="text-secondary tracking-[0.25em] uppercase text-[10px] font-black mb-6 block font-inter antialiased">Young Explorers</span>
+      <h1 class="text-5xl md:text-6xl font-black mb-6 font-inter text-on-surface tracking-tight">AI for <span class="text-secondary italic">Kids</span></h1>
+      <p class="text-on-surface-variant text-lg leading-relaxed">Interactive, gamified learning paths to build curiosity, foundational ethics, and confidence in the next generation.</p>
+    </div>
 
     {resources.length === 0 && (
-      <p class="text-cyber-grey">No kids resources yet. Add some "AI for Kids Resource" documents in Sanity.</p>
+      <div class="text-on-surface-variant font-mono border border-dashed border-outline-variant/30 p-16 rounded-3xl text-center bg-surface-container-low/30">No kids resources currently available.</div>
     )}
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
       {resources.map((r: any) => (
-        <article class="bg-midnight-glass/70 border border-white/10 rounded-2xl p-6 flex flex-col gap-3">
-          <header class="flex items-baseline justify-between gap-4">
-            <h2 class="text-xl font-semibold text-starlight">{r.title}</h2>
-            {r.ageGroup && (
-              <span class="text-xs px-2 py-1 rounded-full bg-electric-cyan/10 text-electric-cyan uppercase tracking-wide">
-                Ages {r.ageGroup}
-              </span>
-            )}
+        <article class="bg-white border border-outline-variant/40 rounded-[2rem] p-10 flex flex-col gap-6 hover:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-all duration-500 group">
+          <header class="flex flex-col gap-4">
+            <div class="flex justify-between items-start">
+              {r.ageGroup && (
+                <span class="text-[10px] px-3 py-1 rounded-full bg-secondary-container/30 text-secondary font-black tracking-widest uppercase shrink-0">
+                  Ages {r.ageGroup}
+                </span>
+              )}
+            </div>
+            <h2 class="text-2xl font-bold text-on-surface group-hover:text-secondary transition-colors tracking-tight leading-tight">{r.title}</h2>
           </header>
 
           {r.safetyNote && (
-            <p class="text-sm text-cyber-grey">Safety: {r.safetyNote}</p>
+            <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20">
+              <p class="text-xs text-on-surface-variant leading-relaxed">
+                <span class="font-black uppercase tracking-widest text-[9px] block mb-1 scale-95 origin-left">Safety Priority:</span> 
+                {r.safetyNote}
+              </p>
+            </div>
           )}
 
-          {r.videoUrl && (
-            <div class="mt-2">
+          <div class="mt-auto pt-6">
+             {r.videoUrl && (
               <a
                 href={r.videoUrl}
-                class="inline-block text-electric-cyan hover:underline text-sm font-semibold"
+                class="inline-flex items-center gap-2 text-primary hover:text-secondary text-sm font-black uppercase tracking-widest transition-colors scale-95 origin-left"
                 target="_blank"
                 rel="noreferrer"
               >
-                Watch activity video
+                <span class="material-symbols-outlined text-lg">play_circle</span>
+                Watch Activity
               </a>
-            </div>
-          )}
+            )}
+          </div>
         </article>
       ))}
     </div>

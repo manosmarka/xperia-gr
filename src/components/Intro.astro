@@ -1,0 +1,74 @@
+---
+---
+<div id="intro-screen" class="fixed inset-0 z-[100] bg-[#023047] flex flex-col items-center justify-center overflow-hidden transition-opacity duration-1000">
+  <div class="relative z-10 text-center">
+    <div id="intro-logo" class="text-4xl md:text-6xl font-black text-white tracking-[-0.05em] mb-8 opacity-0">
+      XPERIA<span class="text-primary italic">_AI</span>
+    </div>
+    <div id="intro-status" class="font-mono text-[10px] uppercase tracking-[0.3em] text-white/40 h-4">
+      <!-- Logic for typing strings -->
+    </div>
+  </div>
+  
+  <!-- Scanning Line -->
+  <div class="absolute inset-0 pointer-events-none opacity-10">
+    <div class="w-full h-[1px] bg-white absolute top-0 animate-scanline"></div>
+    <div class="w-full h-full bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-50"></div>
+  </div>
+</div>
+
+<style>
+  @keyframes scanline {
+    from { top: -100px; }
+    to { top: 100vh; }
+  }
+  .animate-scanline {
+    animation: scanline 4s linear infinite;
+  }
+</style>
+
+<script>
+  const introStatus = document.getElementById('intro-status');
+  const introScreen = document.getElementById('intro-screen');
+  const introLogo = document.getElementById('intro-logo');
+  
+  const statusMessages = [
+    'Initializing Neural Mesh...',
+    'Calibrating Intelligence Layers...',
+    'Synchronizing Xperia_AI_Core...',
+    'Welcome to the Future.'
+  ];
+
+  let currentMsg = 0;
+  
+  function typeMessage() {
+    if (introStatus && currentMsg < statusMessages.length) {
+      introStatus.innerText = statusMessages[currentMsg];
+      currentMsg++;
+      setTimeout(typeMessage, 400);
+    }
+  }
+
+  // Initial sequence
+  window.addEventListener('DOMContentLoaded', () => {
+    // Reveal logo
+    if (introLogo) {
+        setTimeout(() => {
+            introLogo.style.opacity = '1';
+            introLogo.style.transition = 'opacity 0.8s ease-in-out';
+        }, 200);
+    }
+
+    // Initial message
+    typeMessage();
+
+    // Final Fade
+    setTimeout(() => {
+      if (introScreen) {
+        introScreen.classList.add('opacity-0');
+        introScreen.style.pointerEvents = 'none';
+      }
+      document.body.style.overflow = 'auto';
+    }, 2200);
+  });
+</script>

@@ -1,182 +1,206 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
-import { sanityClient } from '../lib/sanity';
+import HeroCore from '../components/HeroCore.astro';
+import { workshops as allWorkshops, articles as allArticles, newsItems } from '../data';
 
-const latestArticles = [
-  {
-    title: "Intro to ChatGPT",
-    body: "Learn the basics of ChatGPT and how to use it effectively for your daily tasks.",
-    href: "/articles/intro-to-chatgpt",
-    date: "Nov 22, 2025",
-    tags: ["Beginner", "Tools"]
-  },
-  {
-    title: "AI Ethics 101",
-    body: "Understanding the ethical implications of artificial intelligence in modern society.",
-    href: "/articles/ai-ethics",
-    date: "Nov 21, 2025",
-    tags: ["Ethics"]
-  },
-  {
-    title: "Generative AI for Art",
-    body: "Explore how generative AI is transforming the creative landscape for artists.",
-    href: "/articles/gen-ai-art",
-    date: "Nov 20, 2025",
-    tags: ["Creative", "Tutorials"]
-  }
-];
-
-const newsTicker = [
-  "OpenAI releases new model",
-  "Google Gemini update available",
-  "AI regulation talks in EU parliament",
-  "New AI tools for education announced"
-];
-
-// Fetch a few upcoming workshops/seminars from Sanity
-const workshopsQuery = `*[_type == "workshop"] | order(startDateTime asc)[0..2]{
-  eventName,
-  summary,
-  difficulty
-}`;
-
-const workshops = await sanityClient.fetch(workshopsQuery);
+const workshops = allWorkshops.slice(0, 3);
 ---
 
-<Layout title="Xperia.gr - AI Education Platform">
-	<!-- Hero Section -->
-  <section class="flex flex-col-reverse md:flex-row items-center justify-between min-h-[60vh] gap-12 mb-16">
-    <div class="flex-1 space-y-6 text-center md:text-left">
-      <h1 class="text-5xl md:text-7xl font-orbitron font-bold leading-tight">
-        Demystifying <span class="text-transparent bg-clip-text bg-gradient-to-r from-electric-cyan to-neural-blue glow-text">AI</span><br />
-        for Greece
+<Layout title="Xperia | AI Seminars Gateway">
+  <!-- Hero Section -->
+  <section class="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-white mb-24 transition-all duration-1000">
+    <!-- Deep light ambient glow -->
+    <div class="absolute inset-0 z-0" style="background: radial-gradient(circle at 50% 50%, rgba(142, 202, 230, 0.08) 0%, rgba(255, 255, 255, 1) 80%);"></div>
+    
+    <div class="max-w-6xl mx-auto z-10 pt-24 pb-12">
+      <div class="mb-10">
+        <span id="hero-subtitle" class="text-secondary tracking-[0.4em] uppercase text-[10px] font-black block font-inter antialiased opacity-70 min-h-[1em]"></span>
+      </div>
+      
+      <h1 id="hero-title" class="text-6xl md:text-[6.5rem] font-black leading-[0.95] tracking-[-0.06em] text-on-surface mb-12 font-inter antialiased min-h-[3em]">
+          <!-- Typed Content -->
       </h1>
-      <p class="text-xl text-cyber-grey max-w-lg mx-auto md:mx-0">
-        Your gateway to understanding Artificial Intelligence. 
-        Learn, explore, and create with confidence.
-      </p>
-      <div class="flex gap-4 justify-center md:justify-start pt-4">
-        <a href="/workshops" class="bg-electric-cyan text-deep-void font-bold py-3 px-8 rounded-2xl hover:glow-box transition-all">
-          Start Learning
+
+      <!-- Central Generative Core -->
+      <div class="reveal-up delay-3 relative w-full max-w-2xl mx-auto h-[400px] mb-20 flex items-center justify-center">
+        <HeroCore />
+      </div>
+
+<script>
+  function typeWriter(elementId: string, text: string, speed: number = 80, delay: number = 0) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    // Add typing class for cursor
+    element.classList.add('typing');
+    
+    setTimeout(() => {
+      let i = 0;
+      function type() {
+        if (i < text.length) {
+          if (text.charAt(i) === '<') {
+            const tagEnd = text.indexOf('>', i);
+            if (tagEnd !== -1) {
+              element!.innerHTML += text.substring(i, tagEnd + 1);
+              i = tagEnd + 1;
+              setTimeout(type, speed);
+              return;
+            }
+          }
+          element!.innerHTML += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        } else {
+          // Remove cursor after typing
+          setTimeout(() => element!.classList.remove('typing'), 1000);
+        }
+      }
+      type();
+    }, delay);
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const baseDelay = 2300;
+    typeWriter('hero-subtitle', 'Intelligence Refined', 100, baseDelay);
+    typeWriter('hero-title', 'Master AI for Every<br/> <span class="text-primary italic">Stage of Life</span>', 80, baseDelay + 2200);
+  });
+</script>
+
+<style>
+  .typing::after {
+    content: '|';
+    display: inline-block;
+    margin-left: 4px;
+    color: var(--color-primary);
+    animation: blink 0.8s infinite;
+    font-weight: 200;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+
+      <div class="reveal-up delay-4 flex flex-col md:flex-row gap-8 justify-center items-center">
+        <a href="/workshops" class="group relative px-14 py-6 bg-on-surface text-background rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-primary hover:shadow-[0_25px_50px_-12px_rgba(251,133,0,0.4)] transition-all duration-500 active:scale-95 overflow-hidden">
+          <span class="relative z-10">Initialize Learning</span>
+          <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
         </a>
-        <a href="/news" class="border border-electric-cyan text-electric-cyan font-bold py-3 px-8 rounded-2xl hover:bg-electric-cyan/10 transition-all">
-          Latest News
+        <a href="/workshops" class="px-14 py-6 bg-transparent border border-outline-variant/40 text-on-surface/60 rounded-full font-black text-xs uppercase tracking-[0.2em] hover:text-on-surface hover:border-on-surface transition-all duration-500 active:scale-95">
+          System Overview
         </a>
       </div>
     </div>
-    
-    <div class="flex-1 flex justify-center items-center relative">
-      <!-- 3D Logo Placeholder / Effect -->
-      <div class="relative w-64 h-64 md:w-96 md:h-96">
-        <div class="absolute inset-0 bg-electric-cyan/20 rounded-full blur-3xl animate-pulse"></div>
-        <div class="relative z-10 w-full h-full bg-gradient-to-br from-midnight-glass to-deep-void border border-white/10 rounded-3xl flex items-center justify-center glow-box rotate-3 hover:rotate-0 transition-transform duration-500">
-          <span class="text-6xl font-orbitron font-bold text-electric-cyan glow-text">X</span>
+  </section>
+
+  <!-- Paths (Primary Content Area) -->
+  <section class="py-16 md:px-12 max-w-[1440px] mx-auto w-full mb-24 relative z-20">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <!-- For Kids -->
+      <a href="/kids" class="group relative p-10 rounded-2xl bg-white border border-outline-variant/40 hover:border-secondary transition-all duration-500 overflow-hidden block shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)]">
+        <div class="relative z-10 h-full flex flex-col">
+          <div class="w-16 h-16 rounded-2xl bg-secondary-container/30 flex items-center justify-center mb-10 transition-transform group-hover:scale-110">
+            <span class="material-symbols-outlined text-secondary text-3xl">child_care</span>
+          </div>
+          <h3 class="text-2xl font-bold text-on-surface mb-4 tracking-tight">For Kids</h3>
+          <p class="text-on-surface-variant leading-relaxed mb-12">Interactive, gamified AI learning paths designed to foster curiosity and foundational ethics in the next generation.</p>
+          <div class="mt-auto flex items-center gap-2 text-secondary font-bold group-hover:translate-x-2 transition-transform">
+            <span class="text-sm">Explore Gamified AI</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- For Adults -->
+      <a href="/workshops" class="group relative p-10 rounded-2xl bg-white border border-outline-variant/40 hover:border-primary transition-all duration-500 overflow-hidden md:scale-105 z-10 shadow-[0_45px_80px_-20px_rgba(0,0,0,0.08)] block">
+        <div class="relative z-10 h-full flex flex-col">
+          <div class="w-16 h-16 rounded-2xl bg-primary-container/30 flex items-center justify-center mb-10 transition-transform group-hover:scale-110">
+            <span class="material-symbols-outlined text-primary text-3xl">psychology</span>
+          </div>
+          <h3 class="text-2xl font-bold text-on-surface mb-4 tracking-tight">For Adults</h3>
+          <p class="text-on-surface-variant leading-relaxed mb-12">Sleek, career-focused mastery programs. Transition your workflow into the age of AI with professional-grade tools.</p>
+          <div class="mt-auto flex items-center gap-2 text-primary font-bold group-hover:translate-x-2 transition-transform">
+            <span class="text-sm">Elevate Your Career</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- For Small Business -->
+      <a href="/workshops" class="group relative p-10 rounded-2xl bg-white border border-outline-variant/40 hover:border-secondary transition-all duration-500 overflow-hidden block shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)]">
+        <div class="relative z-10 h-full flex flex-col">
+          <div class="w-16 h-16 rounded-2xl bg-secondary-container/20 flex items-center justify-center mb-10 transition-transform group-hover:scale-110">
+            <span class="material-symbols-outlined text-secondary text-3xl">insights</span>
+          </div>
+          <h3 class="text-2xl font-bold text-on-surface mb-4 tracking-tight">Small Business</h3>
+          <p class="text-on-surface-variant leading-relaxed mb-12">Analytics and growth-focused seminars. Automate operations and leverage data to scale your vision efficiently.</p>
+          <div class="mt-auto flex items-center gap-2 text-secondary font-bold group-hover:translate-x-2 transition-transform">
+            <span class="text-sm">Analyze Growth</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- 4D AI Fluency Bar -->
+  <section class="py-24 bg-surface-container-low/50 -mx-4 px-4 w-[calc(100%+2rem)] mb-24 overflow-hidden">
+    <div class="max-w-[1440px] mx-auto px-4 md:px-12">
+      <p class="text-center text-on-surface-variant/60 font-black tracking-[0.25em] uppercase text-[10px] mb-12">The 4D AI Fluency Framework</p>
+      <div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-3xl">assignment_turned_in</span>
+          <span class="font-bold text-xl tracking-tighter text-on-surface uppercase">Delegation</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-3xl">chat_bubble</span>
+          <span class="font-bold text-xl tracking-tighter text-on-surface uppercase">Description</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-3xl">visibility</span>
+          <span class="font-bold text-xl tracking-tighter text-on-surface uppercase">Discernment</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-3xl">verified_user</span>
+          <span class="font-bold text-xl tracking-tighter text-on-surface uppercase">Diligence</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- News Ticker -->
-  <div class="w-full bg-midnight-glass border-y border-white/5 overflow-hidden py-2 mb-16">
-    <div class="whitespace-nowrap animate-marquee inline-block">
-      {newsTicker.map(item => (
-        <span class="mx-8 text-cyber-grey font-mono">
-          <span class="text-electric-cyan mr-2">>></span> {item}
-        </span>
-      ))}
-       {newsTicker.map(item => (
-        <span class="mx-8 text-cyber-grey font-mono">
-          <span class="text-electric-cyan mr-2">>></span> {item}
-        </span>
-      ))}
+  <!-- The Seminar Glass Blade -->
+  <section class="pb-32 px-4 md:px-12 max-w-[1440px] mx-auto w-full overflow-hidden">
+    <div class="flex justify-between items-end mb-12">
+      <h2 class="text-4xl font-black tracking-tight text-on-surface">Upcoming Seminars</h2>
+      <a href="/workshops" class="text-primary hover:text-secondary font-bold transition-colors">View all</a>
     </div>
-  </div>
-
-  <!-- Who is this for? -->
-  <section class="mb-20">
-    <h2 class="text-3xl font-orbitron font-bold mb-8 text-center md:text-left">Who is this for?</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="p-6 rounded-2xl bg-midnight-glass/50 border border-white/5 hover:border-electric-cyan/50 transition-colors">
-        <h3 class="text-xl font-bold text-starlight mb-2">Students</h3>
-        <p class="text-cyber-grey">Master the tools that will define your future career.</p>
-      </div>
-      <div class="p-6 rounded-2xl bg-midnight-glass/50 border border-white/5 hover:border-electric-cyan/50 transition-colors">
-        <h3 class="text-xl font-bold text-starlight mb-2">Parents</h3>
-        <p class="text-cyber-grey">Guide your children safely through the AI revolution.</p>
-      </div>
-      <div class="p-6 rounded-2xl bg-midnight-glass/50 border border-white/5 hover:border-electric-cyan/50 transition-colors">
-        <h3 class="text-xl font-bold text-starlight mb-2">Business</h3>
-        <p class="text-cyber-grey">Integrate AI into your workflow for maximum efficiency.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Latest Articles -->
-  <section class="mb-20">
-    <div class="flex justify-between items-end mb-8">
-      <h2 class="text-3xl font-orbitron font-bold">Latest Articles</h2>
-      <a href="/learn" class="text-electric-cyan hover:underline">View all</a>
-    </div>
-    <ul role="list" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {latestArticles.map((article) => (
-        <Card
-          href={article.href}
-          title={article.title}
-          body={article.body}
-          date={article.date}
-          tags={article.tags}
-        />
-      ))}
-    </ul>
-  </section>
-
-  <!-- Workshops & Seminars Summary -->
-  <section class="mb-20 rounded-3xl bg-gradient-to-r from-midnight-glass to-deep-void border border-white/10 p-8 md:p-12">
-    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
-      <div class="max-w-md">
-        <h2 class="text-3xl font-orbitron font-bold mb-4">Workshops &amp; Seminars</h2>
-        <p class="text-cyber-grey mb-6">
-          Join focused, hands-on sessions to build real AI skills — from your first prompt to advanced workflows.
-        </p>
-        <a href="/workshops" class="inline-block bg-neural-blue text-white font-bold py-3 px-8 rounded-2xl hover:bg-neural-blue/80 transition-colors">
-          View all workshops
-        </a>
-      </div>
-
-      <div class="flex-1 grid gap-4">
-        {workshops.length === 0 && (
-          <p class="text-cyber-grey text-sm">No workshops published yet. Add some in Sanity to see them here.</p>
-        )}
-
-        {workshops.map((w: any) => (
-          <div class="bg-deep-void/60 border border-white/10 rounded-2xl p-4 hover:border-electric-cyan/60 transition-colors">
-            <div class="flex items-baseline justify-between gap-4">
-              <h3 class="font-semibold text-starlight">{w.eventName}</h3>
-              {w.difficulty && (
-                <span class="text-xs px-2 py-1 rounded-full bg-electric-cyan/10 text-electric-cyan uppercase tracking-wide">
-                  {w.difficulty}
-                </span>
-              )}
+    
+    <div class="space-y-4">
+      {workshops.map((w: any, index: number) => {
+        const isFirst = index === 0;
+        const borderColor = isFirst ? 'border-primary' : 'border-outline-variant/30';
+        const dateColor = isFirst ? 'text-primary' : 'text-on-surface-variant/60';
+        const dateString = w.startDateTime ? new Date(w.startDateTime).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }).toUpperCase() : 'TBA';
+        
+        return (
+          <div class={`flex flex-col md:flex-row items-center justify-between p-10 rounded-2xl bg-white border border-outline-variant/30 border-l-4 ${borderColor} hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.05)] transition-all duration-400 group`}>
+            <div class="flex items-start md:items-center gap-10 mb-6 md:mb-0 w-full md:w-auto">
+              <div class={`${dateColor} font-bold text-xs tracking-widest w-16 shrink-0`}>{dateString}</div>
+              <div>
+                <h4 class="text-2xl font-bold mb-2 group-hover:text-primary transition-colors text-on-surface">{w.eventName}</h4>
+                <p class="text-on-surface-variant max-w-lg">{w.summary}</p>
+              </div>
             </div>
-            {w.summary && (
-              <p class="text-sm text-cyber-grey mt-2">
-                {w.summary}
-              </p>
-            )}
+            <a href={w.bookingUrl || '/workshops'} target="_blank" class="w-full md:w-auto text-center px-10 py-4 rounded-full bg-on-surface text-white hover:bg-primary font-bold transition-all duration-400 shrink-0">
+              Reserve Seat
+            </a>
           </div>
-        ))}
-      </div>
+        )
+      })}
+
+      {workshops.length === 0 && (
+         <div class="text-on-surface-variant font-mono border border-dashed border-outline-variant/30 p-12 rounded-2xl text-center shadow-inner">No active seminars available at this time.</div>
+      )}
     </div>
   </section>
 </Layout>
-
-<style>
-  @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-  .animate-marquee {
-    animation: marquee 30s linear infinite;
-  }
-</style>

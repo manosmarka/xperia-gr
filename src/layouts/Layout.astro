@@ -4,28 +4,77 @@ import '@fontsource/orbitron';
 import '@fontsource/inter';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import Intro from '../components/Intro.astro';
+import ParticleBackground from '../components/ParticleBackground.astro';
 
 interface Props {
-	title: string;
+  title: string;
+  description?: string;
+  image?: string;
+  type?: string;
+  jsonLd?: any;
 }
 
-const { title } = Astro.props;
+const { 
+  title, 
+  description = "Xperia.gr - AI Education Platform for Greece. Learn, explore, and create with Artificial Intelligence.", 
+  image = "/images/intro_to_chatgpt.png", 
+  type = "website",
+  jsonLd
+} = Astro.props;
+
 const { currentLocale } = Astro;
+const defaultJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Xperia.gr",
+  "url": "https://xperia.gr",
+  "description": "AI Education Platform for Greece",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Xperia.gr",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://xperia.gr/favicon.svg"
+    }
+  }
+};
+
+const schema = jsonLd || defaultJsonLd;
 ---
 
 <!doctype html>
 <html lang={currentLocale || 'el'}>
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Xperia.gr - AI Education Platform" />
+		<meta name="description" content={description} />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <!-- Open Graph / AEO tags -->
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={image} />
+    
 		<title>{title}</title>
+    
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
 	</head>
-	<body class="flex flex-col min-h-screen bg-deep-void text-starlight font-inter selection:bg-electric-cyan selection:text-deep-void">
+	<body class="flex flex-col min-h-screen bg-background text-on-surface font-inter antialiased selection:bg-secondary/20 selection:text-secondary">
+    <Intro />
+    <ParticleBackground />
     <Navbar />
-    <main class="flex-grow container mx-auto px-4 py-8 mt-8">
+    <main class="flex-grow flex flex-col">
 		  <slot />
     </main>
     <Footer />
